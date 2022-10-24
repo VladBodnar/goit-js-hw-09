@@ -5,12 +5,24 @@ import 'flatpickr/dist/flatpickr.min.css';
 const myInput = document.querySelector('#datetime-picker');
 const startBtn = document.querySelector('button');
 const timerRef = document.querySelector('.timer');
-spanTimer = timerRef.querySelectorAll('.label');
+const spanTimer = timerRef.querySelectorAll('.label');
 timerRef.style = 'display:flex';
 spanTimer[0].style = 'display:block';
 spanTimer[1].style = 'display:block';
 spanTimer[2].style = 'display:block';
 spanTimer[3].style = 'display:block';
+
+const startTimer = () => {
+  const TIMER_DEADLINE = new Date(...selectedDateArray);
+  timer.start(timerRef, TIMER_DEADLINE);
+  startBtn.removeEventListener('click', startTimer);
+};
+
+const createSrartBtnListener = () => {
+  startBtn.addEventListener('click', startTimer);
+};
+
+createSrartBtnListener();
 
 const selectedDateArray = [];
 
@@ -21,6 +33,7 @@ const options = {
   minuteIncrement: 1,
   onClose(selectedDates) {
     selectedDateArray.push(selectedDates[0]);
+    createSrartBtnListener();
   },
 };
 
@@ -88,11 +101,3 @@ const timer = {
     return String(value).padStart(2, '0');
   },
 };
-
-const startTimer = () => {
-  const TIMER_DEADLINE = new Date(...selectedDateArray);
-  timer.start(timerRef, TIMER_DEADLINE);
-  startBtn.removeEventListener('click', startTimer);
-};
-
-startBtn.addEventListener('click', startTimer);
