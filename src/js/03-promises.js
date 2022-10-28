@@ -34,7 +34,7 @@ function createPromise(delay, step, amount, position) {
   position = position + 1;
   if (position > amount) {
     console.log('End');
-    Notify.success('End', this.notifyOptions);
+    Notify.success('End');
     clearTimeout();
     return;
   }
@@ -44,25 +44,18 @@ function createPromise(delay, step, amount, position) {
       if (shouldResolve) {
         createObjekt(delay, position);
         console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
-        Notify.success(
-          `✅ Fulfilled promise ${position} in ${delay}ms`,
-          this.notifyOptions
-        );
+        Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
 
         console.log('resolve', position);
       } else {
         createObjekt(delay, position);
         console.log(`❌ Rejected promise ${position} in ${delay}ms`);
-        Notify.failure(
-          `❌ Rejected promise ${position} in ${delay}ms`,
-          this.notifyOptions
-        );
+        Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
       }
       createPromise(delay, step, amount, position);
     }, delay);
   });
 }
-submRef.addEventListener('click', eventFunction);
 
 function eventFunction(event) {
   event.preventDefault();
@@ -73,5 +66,7 @@ function eventFunction(event) {
   const stepDelayStart = Number(stepDelayRef.value);
   let positionStart = 0;
   createPromise(delayStart, stepDelayStart, amountStart, positionStart);
-  Notify.success('start', this.notifyOptions);
+  Notify.success('start');
 }
+
+submRef.addEventListener('click', eventFunction);

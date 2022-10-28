@@ -45,8 +45,6 @@ flatpickr(myInput, options);
 
 const dates = {
   notifyOptions: {
-    position: 'r-center',
-    backOverlay: true,
     clickToClose: true,
     closeButton: true,
   },
@@ -71,8 +69,6 @@ const timer = {
   refs: {},
 
   notifyOptions: {
-    position: 'r-center',
-    backOverlay: true,
     clickToClose: true,
     closeButton: true,
   },
