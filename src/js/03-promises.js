@@ -1,9 +1,21 @@
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
 const inputRef = document.querySelectorAll('input');
 const submRef = document.querySelector('button');
+const formRef = document.querySelector('form');
+formRef.style = 'display:flex';
 
 const firstDelayRef = inputRef[0];
 const stepDelayRef = inputRef[1];
 const amountRef = inputRef[2];
+
+firstDelayRef.style = 'display:block';
+stepDelayRef.style = 'display:block';
+amountRef.style = 'display:block';
+
+firstDelayRef.style.marginRight = '30px';
+stepDelayRef.style.marginRight = '30px';
+amountRef.style.marginRight = '30px';
 
 amountRef.addEventListener('input', () => {});
 firstDelayRef.addEventListener('input', () => {});
@@ -22,6 +34,7 @@ function createPromise(delay, step, amount, position) {
   position = position + 1;
   if (position > amount) {
     console.log('End');
+    Notify.success('End', this.notifyOptions);
     clearTimeout();
     return;
   }
@@ -31,17 +44,27 @@ function createPromise(delay, step, amount, position) {
       if (shouldResolve) {
         createObjekt(delay, position);
         console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+        Notify.success(
+          `✅ Fulfilled promise ${position} in ${delay}ms`,
+          this.notifyOptions
+        );
 
         console.log('resolve', position);
       } else {
         createObjekt(delay, position);
         console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+        Notify.failure(
+          `❌ Rejected promise ${position} in ${delay}ms`,
+          this.notifyOptions
+        );
       }
       createPromise(delay, step, amount, position);
     }, delay);
   });
 }
-submRef.addEventListener('click', event => {
+submRef.addEventListener('click', eventFunction);
+
+function eventFunction(event) {
   event.preventDefault();
   console.log('start');
 
@@ -50,4 +73,5 @@ submRef.addEventListener('click', event => {
   const stepDelayStart = Number(stepDelayRef.value);
   let positionStart = 0;
   createPromise(delayStart, stepDelayStart, amountStart, positionStart);
-});
+  Notify.success('start', this.notifyOptions);
+}

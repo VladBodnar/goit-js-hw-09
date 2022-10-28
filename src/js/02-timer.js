@@ -5,24 +5,27 @@ import 'flatpickr/dist/flatpickr.min.css';
 const myInput = document.querySelector('#datetime-picker');
 const startBtn = document.querySelector('button');
 const timerRef = document.querySelector('.timer');
+const fieldTimer = document.querySelectorAll('.field');
 const spanTimer = timerRef.querySelectorAll('.label');
+const valueTimer = timerRef.querySelectorAll('.value');
+
+startBtn.disabled = true;
+
 timerRef.style = 'display:flex';
+fieldTimer[0].style.marginRight = '10px';
+fieldTimer[1].style.marginRight = '10px';
+fieldTimer[2].style.marginRight = '10px';
+fieldTimer[3].style.marginRight = '10px';
+
+valueTimer[0].style.fontSize = '30px';
+valueTimer[1].style.fontSize = '30px';
+valueTimer[2].style.fontSize = '30px';
+valueTimer[3].style.fontSize = '30px';
+
 spanTimer[0].style = 'display:block';
 spanTimer[1].style = 'display:block';
 spanTimer[2].style = 'display:block';
 spanTimer[3].style = 'display:block';
-
-const startTimer = () => {
-  const TIMER_DEADLINE = new Date(...selectedDateArray);
-  timer.start(timerRef, TIMER_DEADLINE);
-  startBtn.removeEventListener('click', startTimer);
-};
-
-const createSrartBtnListener = () => {
-  startBtn.addEventListener('click', startTimer);
-};
-
-createSrartBtnListener();
 
 const selectedDateArray = [];
 
@@ -32,12 +35,36 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
+    selectedDateArray.pop();
     selectedDateArray.push(selectedDates[0]);
-    createSrartBtnListener();
+    dates.policer();
   },
 };
 
 flatpickr(myInput, options);
+
+const dates = {
+  notifyOptions: {
+    position: 'r-center',
+    backOverlay: true,
+    clickToClose: true,
+    closeButton: true,
+  },
+
+  policer() {
+    const TIMER_DEADLINE = new Date(...selectedDateArray);
+    const delta = TIMER_DEADLINE.getTime() - Date.now();
+    if (delta <= 0) {
+      Notify.failure(
+        'Вибраний час в минулому, виберіть дату в майбутньому!',
+        this.notifyOptions
+      );
+      return;
+    }
+    Notify.success('Дату в майбутньому', this.notifyOptions);
+    startBtn.disabled = false;
+  },
+};
 
 const timer = {
   intervalId: null,
@@ -49,20 +76,13 @@ const timer = {
     clickToClose: true,
     closeButton: true,
   },
+
   start(rootSelector, deadline) {
-    const delta = deadline.getTime() - Date.now();
-    if (delta <= 0) {
-      Notify.failure(
-        'Вибраний час в минулому, виберіть дату в майбутньому!',
-        this.notifyOptions
-      );
-      return;
-    }
+    clearInterval(this.intervalId);
     Notify.success('Відлік почався', this.notifyOptions);
     this.getRefs(rootSelector);
     this.intervalId = setInterval(() => {
       const diff = deadline.getTime() - Date.now();
-      console.log(diff);
       if (diff <= 1000) {
         clearInterval(this.intervalId);
         Notify.success('Дедлайн настав!', this.notifyOptions);
@@ -93,7 +113,6 @@ const timer = {
     const hours = Math.floor((diff % day) / hour);
     const minutes = Math.floor(((diff % day) % hour) / minute);
     const seconds = Math.floor((((diff % day) % hour) % minute) / second);
-
     return { days, hours, minutes, seconds };
   },
 
@@ -101,3 +120,9 @@ const timer = {
     return String(value).padStart(2, '0');
   },
 };
+
+startBtn.addEventListener('click', () => {
+  const TIM_DEADLINE = new Date(...selectedDateArray);
+  timer.start(timerRef, TIM_DEADLINE);
+  startBtn.disabled = true;
+});
