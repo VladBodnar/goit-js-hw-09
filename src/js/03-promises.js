@@ -29,9 +29,7 @@ function createObjekt(deleyObjekt, posicionObjekt) {
   console.log(result);
 }
 
-function createPromise(delay, step, amount, position) {
-  delay = delay + step;
-  position = position + 1;
+function createPromise(delay, step, amount, position) {  
   if (position > amount) {
     console.log('End');
     Notify.success('End');
@@ -52,6 +50,8 @@ function createPromise(delay, step, amount, position) {
         console.log(`❌ Rejected promise ${position} in ${delay}ms`);
         Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
       }
+      delay = delay + step;
+      position = position + 1;
       createPromise(delay, step, amount, position);
     }, delay);
   });
@@ -64,7 +64,7 @@ function eventFunction(event) {
   const amountStart = Number(amountRef.value);
   const delayStart = Number(firstDelayRef.value);
   const stepDelayStart = Number(stepDelayRef.value);
-  let positionStart = 0;
+  let positionStart = 1;
   createPromise(delayStart, stepDelayStart, amountStart, positionStart);
   Notify.success('start');
 }
